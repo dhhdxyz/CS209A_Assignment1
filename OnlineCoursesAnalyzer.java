@@ -96,46 +96,65 @@ public class OnlineCoursesAnalyzer {
     return list;
   }
 
-    public List<String> getCourses(int topK, String by) {
-        return null;
-    }
+  public List<String> getCourses(int topK, String by) {
+    List<String> cour = courses.stream()
+              .sorted(by.equals("hours") ? Comparator.comparingDouble(Course::getTotalHours)
+                      .reversed().thenComparing(Course::getTitle)
+                      : Comparator.comparingDouble(Course::getParticipants)
+                      .reversed().thenComparing(Course::getTitle))
+              .map(Course::getTitle)
+              .distinct()
+              .limit(topK)
+              .collect(Collectors.toList());
+    return cour;
+  }
 
-    public List<String> searchCourses(String courseSubject, double percentAudited, double totalCourseHours) {
-        return null;
-    }
+  public List<String> searchCourses(String courseSubject, double percentAudited, double totalCourseHours) {
+    List<String> cour = courses.stream()
+                .filter(course -> course.getSubject().toLowerCase()
+                        .contains(courseSubject.toLowerCase()))
+                .filter(course -> course.getPercentAudited() >= percentAudited)
+                .filter(course -> course.getTotalHours() <= totalCourseHours)
+                .map(Course::getTitle)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+    return cour;
+  }
 
-    public List<String> recommendCourses(int age, int gender, int isBachelorOrHigher) {
-        return null;
-    }
+  public List<String> recommendCourses(int age, int gender, int isBachelorOrHigher) {
+
+    return null;
+  }
 
 }
 
 class Course {
-    String institution;
-    String number;
-    Date launchDate;
-    String title;
-    String instructors;
-    String subject;
-    int year;
-    int honorCode;
-    int participants;
-    int audited;
-    int certified;
-    double percentAudited;
-    double percentCertified;
-    double percentCertified50;
-    double percentVideo;
-    double percentForum;
-    double gradeHigherZero;
-    double totalHours;
-    double medianHoursCertification;
-    double medianAge;
-    double percentMale;
-    double percentFemale;
-    double percentDegree;
+  String institution;
+  String number;
+  Date launchDate;
+  String title;
+  String instructors;
+  String subject;
+  int year;
+  int honorCode;
+  int participants;
+  int audited;
+  int certified;
+  double percentAudited;
+  double percentCertified;
+  double percentCertified50;
+  double percentVideo;
+  double percentForum;
+  double gradeHigherZero;
+  double totalHours;
+  double medianHoursCertification;
+  double medianAge;
+  double percentMale;
+  double percentFemale;
+  double percentDegree;
 
-    public Course(String institution, String number, Date launchDate,
+  public Course(String institution, String number, Date launchDate,
                   String title, String instructors, String subject,
                   int year, int honorCode, int participants,
                   int audited, int certified, double percentAudited,
@@ -144,36 +163,48 @@ class Course {
                   double totalHours, double medianHoursCertification,
                   double medianAge, double percentMale, double percentFemale,
                   double percentDegree) {
-        this.institution = institution;
-        this.number = number;
-        this.launchDate = launchDate;
-        if (title.startsWith("\"")) title = title.substring(1);
-        if (title.endsWith("\"")) title = title.substring(0, title.length() - 1);
-        this.title = title;
-        if (instructors.startsWith("\"")) instructors = instructors.substring(1);
-        if (instructors.endsWith("\"")) instructors = instructors.substring(0, instructors.length() - 1);
-        this.instructors = instructors;
-        if (subject.startsWith("\"")) subject = subject.substring(1);
-        if (subject.endsWith("\"")) subject = subject.substring(0, subject.length() - 1);
-        this.subject = subject;
-        this.year = year;
-        this.honorCode = honorCode;
-        this.participants = participants;
-        this.audited = audited;
-        this.certified = certified;
-        this.percentAudited = percentAudited;
-        this.percentCertified = percentCertified;
-        this.percentCertified50 = percentCertified50;
-        this.percentVideo = percentVideo;
-        this.percentForum = percentForum;
-        this.gradeHigherZero = gradeHigherZero;
-        this.totalHours = totalHours;
-        this.medianHoursCertification = medianHoursCertification;
-        this.medianAge = medianAge;
-        this.percentMale = percentMale;
-        this.percentFemale = percentFemale;
-        this.percentDegree = percentDegree;
+    this.institution = institution;
+    this.number = number;
+    this.launchDate = launchDate;
+    if (title.startsWith("\"")) {
+      title = title.substring(1);
     }
+    if (title.endsWith("\"")) {
+      title = title.substring(0, title.length() - 1);
+    }
+    this.title = title;
+    if (instructors.startsWith("\"")) {
+      instructors = instructors.substring(1);
+    }
+    if (instructors.endsWith("\"")) {
+      instructors = instructors.substring(0, instructors.length() - 1);
+    }
+    this.instructors = instructors;
+    if (subject.startsWith("\"")) {
+      subject = subject.substring(1);
+    }
+    if (subject.endsWith("\"")) {
+      subject = subject.substring(0, subject.length() - 1);
+    }
+    this.subject = subject;
+    this.year = year;
+    this.honorCode = honorCode;
+    this.participants = participants;
+    this.audited = audited;
+    this.certified = certified;
+    this.percentAudited = percentAudited;
+    this.percentCertified = percentCertified;
+    this.percentCertified50 = percentCertified50;
+    this.percentVideo = percentVideo;
+    this.percentForum = percentForum;
+    this.gradeHigherZero = gradeHigherZero;
+    this.totalHours = totalHours;
+    this.medianHoursCertification = medianHoursCertification;
+    this.medianAge = medianAge;
+    this.percentMale = percentMale;
+    this.percentFemale = percentFemale;
+    this.percentDegree = percentDegree;
+  }
 
     public String getInstitution() {
         return institution;
