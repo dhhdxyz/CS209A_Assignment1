@@ -2,6 +2,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -123,8 +126,38 @@ public class OnlineCoursesAnalyzer {
   }
 
   public List<String> recommendCourses(int age, int gender, int isBachelorOrHigher) {
+    Map<String, List<Course>> course = courses.stream()
+            .collect(Collectors.groupingBy(Course::getNumber));
 
-    return null;
+    List<String> rc = course.values().stream()
+            .map(cour -> {
+              String name = cour.get(0).getTitle();
+              Date temp = cour.get(0).getLaunchDate();
+              double avMedianAge = 0, avMale = 0, avBachelorsDegreeOrHigher = 0, sVal;
+              for (Course c : cour) {
+                if (temp.compareTo(c.getLaunchDate()) < 0) {
+                  temp = c.getLaunchDate();
+                  name = c.getTitle();
+                }
+                avMedianAge += c.getMedianAge();
+                avMale += c.getPercentMale();
+                avBachelorsDegreeOrHigher += c.getPercentDegree();
+              }
+              avMedianAge = avMedianAge / cour.size();
+              avMale = avMale / cour.size();
+              avBachelorsDegreeOrHigher = avBachelorsDegreeOrHigher / cour.size();
+              sVal = Math.pow((age - avMedianAge), 2)
+                      + Math.pow((gender * 100 - avMale), 2)
+                      + Math.pow((isBachelorOrHigher * 100 - avBachelorsDegreeOrHigher), 2);
+              return Map.entry(name, sVal);
+            })
+            .sorted(Map.Entry.comparingByKey())
+            .sorted(Map.Entry.comparingByValue())
+            .map(Map.Entry::getKey)
+            .distinct()
+            .limit(10)
+            .collect(Collectors.toList());
+    return rc;
   }
 
 }
@@ -206,95 +239,95 @@ class Course {
     this.percentDegree = percentDegree;
   }
 
-    public String getInstitution() {
-        return institution;
-    }
+  public String getInstitution() {
+    return institution;
+  }
 
-    public String getNumber() {
-        return number;
-    }
+  public String getNumber() {
+    return number;
+  }
 
-    public Date getLaunchDate() {
-        return launchDate;
-    }
+  public Date getLaunchDate() {
+    return launchDate;
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public String getInstructors() {
-        return instructors;
-    }
+  public String getInstructors() {
+    return instructors;
+  }
 
-    public String getSubject() {
-        return subject;
-    }
+  public String getSubject() {
+    return subject;
+  }
 
-    public int getYear() {
-        return year;
-    }
+  public int getYear() {
+    return year;
+  }
 
-    public int getHonorCode() {
-        return honorCode;
-    }
+  public int getHonorCode() {
+    return honorCode;
+  }
 
-    public int getParticipants() {
-        return participants;
-    }
+  public int getParticipants() {
+    return participants;
+  }
 
-    public int getAudited() {
-        return audited;
-    }
+  public int getAudited() {
+    return audited;
+  }
 
-    public int getCertified() {
-        return certified;
-    }
+  public int getCertified() {
+    return certified;
+  }
 
-    public double getPercentAudited() {
-        return percentAudited;
-    }
+  public double getPercentAudited() {
+    return percentAudited;
+  }
 
-    public double getPercentCertified() {
-        return percentCertified;
-    }
+  public double getPercentCertified() {
+    return percentCertified;
+  }
 
-    public double getPercentCertified50() {
-        return percentCertified50;
-    }
+  public double getPercentCertified50() {
+    return percentCertified50;
+  }
 
-    public double getPercentVideo() {
-        return percentVideo;
-    }
+  public double getPercentVideo() {
+    return percentVideo;
+  }
 
-    public double getPercentForum() {
-        return percentForum;
-    }
+  public double getPercentForum() {
+    return percentForum;
+  }
 
-    public double getGradeHigherZero() {
-        return gradeHigherZero;
-    }
+  public double getGradeHigherZero() {
+    return gradeHigherZero;
+  }
 
-    public double getTotalHours() {
-        return totalHours;
-    }
+  public double getTotalHours() {
+    return totalHours;
+  }
 
-    public double getMedianHoursCertification() {
-        return medianHoursCertification;
-    }
+  public double getMedianHoursCertification() {
+    return medianHoursCertification;
+  }
 
-    public double getMedianAge() {
-        return medianAge;
-    }
+  public double getMedianAge() {
+    return medianAge;
+  }
 
-    public double getPercentMale() {
-        return percentMale;
-    }
+  public double getPercentMale() {
+    return percentMale;
+  }
 
-    public double getPercentFemale() {
-        return percentFemale;
-    }
+  public double getPercentFemale() {
+    return percentFemale;
+  }
 
-    public double getPercentDegree() {
-        return percentDegree;
-    }
+  public double getPercentDegree() {
+    return percentDegree;
+  }
 }
